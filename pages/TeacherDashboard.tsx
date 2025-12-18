@@ -32,11 +32,11 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ user, school }) => 
   const generateAssignments = async () => {
     if (!topic.trim()) return;
     
-    // Safe access to API Key
-    const apiKey = typeof process !== 'undefined' && process.env ? process.env.API_KEY : '';
+    // Access API Key safely. In browser via process polyfill or env variable.
+    const apiKey = process.env.API_KEY;
     
     if (!apiKey) {
-      alert("API Key is missing. Please check .env.local file.");
+      alert("API Key is missing. Please check .env.local file or internet connection.");
       return;
     }
 
@@ -224,7 +224,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ user, school }) => 
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   placeholder="Enter a topic (e.g., Quadratic Equations, The Cold War)"
-                  className="flex-1 px-4 py-3 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="flex-1 px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-indigo-500 outline-none"
                   onKeyDown={(e) => e.key === 'Enter' && generateAssignments()}
                 />
                 <button

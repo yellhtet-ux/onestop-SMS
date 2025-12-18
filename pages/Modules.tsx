@@ -144,8 +144,8 @@ export const TeacherExams: React.FC = () => (
   <div className="space-y-6">
     <PageHeader title="Exams & Grading" subtitle="Record student marks" />
     <Card>
-       <div className="flex justify-between mb-4">
-         <select className="border p-2 rounded bg-white text-sm"><option>Mid-Term Exam</option><option>Finals</option></select>
+       <div className="flex justify-between mb-4 gap-4">
+         <select className="border border-gray-300 p-2 rounded bg-white text-gray-900 text-sm outline-none focus:border-indigo-500"><option>Mid-Term Exam</option><option>Finals</option></select>
          <button className="bg-indigo-600 text-white px-4 py-2 rounded text-sm font-medium">Save Grades</button>
        </div>
        <table className="w-full">
@@ -153,8 +153,8 @@ export const TeacherExams: React.FC = () => (
            <tr><th className="p-3 text-left">Student</th><th className="p-3 text-center">Marks / 100</th><th className="p-3 text-left">Remarks</th></tr>
          </thead>
          <tbody className="divide-y divide-gray-100">
-            <tr className="bg-white"><td className="p-3 font-medium">Johnny Doe</td><td className="p-3 text-center"><input type="number" defaultValue={85} className="w-16 border rounded p-1 text-center" /></td><td className="p-3"><input type="text" className="w-full border-b border-gray-200 outline-none text-sm" placeholder="Good effort" /></td></tr>
-            <tr className="bg-white"><td className="p-3 font-medium">Sarah Connor</td><td className="p-3 text-center"><input type="number" defaultValue={92} className="w-16 border rounded p-1 text-center" /></td><td className="p-3"><input type="text" className="w-full border-b border-gray-200 outline-none text-sm" placeholder="Excellent" /></td></tr>
+            <tr className="bg-white"><td className="p-3 font-medium text-gray-900">Johnny Doe</td><td className="p-3 text-center"><input type="number" defaultValue={85} className="w-16 border border-gray-300 rounded p-1 text-center bg-white text-gray-900 outline-none focus:border-indigo-500" /></td><td className="p-3"><input type="text" className="w-full border-b border-gray-200 outline-none text-sm bg-white text-gray-900 focus:border-indigo-500" placeholder="Good effort" /></td></tr>
+            <tr className="bg-white"><td className="p-3 font-medium text-gray-900">Sarah Connor</td><td className="p-3 text-center"><input type="number" defaultValue={92} className="w-16 border border-gray-300 rounded p-1 text-center bg-white text-gray-900 outline-none focus:border-indigo-500" /></td><td className="p-3"><input type="text" className="w-full border-b border-gray-200 outline-none text-sm bg-white text-gray-900 focus:border-indigo-500" placeholder="Excellent" /></td></tr>
          </tbody>
        </table>
     </Card>
@@ -228,7 +228,7 @@ export const ParentMessages: React.FC = () => (
           </div>
        </div>
        <div className="p-4 border-t border-gray-100 flex gap-2">
-          <input type="text" placeholder="Type a message..." className="flex-1 border rounded-lg px-4 py-2 outline-none focus:border-indigo-500 bg-gray-50" />
+          <input type="text" placeholder="Type a message..." className="flex-1 border border-gray-300 rounded-lg px-4 py-2 outline-none focus:border-indigo-500 bg-white text-gray-900" />
           <button className="bg-indigo-600 text-white p-2 rounded-lg"><Mail size={20} /></button>
        </div>
     </div>
