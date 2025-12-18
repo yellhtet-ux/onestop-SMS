@@ -1,7 +1,6 @@
 import React from 'react';
-import { MOCK_USERS, MOCK_CLASSES, MOCK_FEES, MOCK_TIMETABLE, MOCK_ASSIGNMENTS } from '../constants';
-import { User, School } from '../types';
-import { Users, BookOpen, CreditCard, BarChart2, Mail, CheckCircle, FileText, Calendar, Clock } from 'lucide-react';
+import { MOCK_USERS, MOCK_CLASSES, MOCK_FEES, MOCK_TIMETABLE } from '../constants';
+import { BookOpen, BarChart2, Mail } from 'lucide-react';
 
 // --- Shared Components ---
 const PageHeader: React.FC<{ title: string; subtitle: string }> = ({ title, subtitle }) => (
@@ -145,16 +144,35 @@ export const TeacherExams: React.FC = () => (
     <PageHeader title="Exams & Grading" subtitle="Record student marks" />
     <Card>
        <div className="flex justify-between mb-4 gap-4">
-         <select className="border border-gray-300 p-2 rounded bg-white text-gray-900 text-sm outline-none focus:border-indigo-500"><option>Mid-Term Exam</option><option>Finals</option></select>
-         <button className="bg-indigo-600 text-white px-4 py-2 rounded text-sm font-medium">Save Grades</button>
+         <select className="border border-gray-300 p-2 rounded-lg bg-white text-gray-900 text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+            <option>Mid-Term Exam</option>
+            <option>Finals</option>
+         </select>
+         <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium">Save Grades</button>
        </div>
        <table className="w-full">
          <thead className="bg-gray-50 text-xs text-gray-500 uppercase">
            <tr><th className="p-3 text-left">Student</th><th className="p-3 text-center">Marks / 100</th><th className="p-3 text-left">Remarks</th></tr>
          </thead>
          <tbody className="divide-y divide-gray-100">
-            <tr className="bg-white"><td className="p-3 font-medium text-gray-900">Johnny Doe</td><td className="p-3 text-center"><input type="number" defaultValue={85} className="w-16 border border-gray-300 rounded p-1 text-center bg-white text-gray-900 outline-none focus:border-indigo-500" /></td><td className="p-3"><input type="text" className="w-full border-b border-gray-200 outline-none text-sm bg-white text-gray-900 focus:border-indigo-500" placeholder="Good effort" /></td></tr>
-            <tr className="bg-white"><td className="p-3 font-medium text-gray-900">Sarah Connor</td><td className="p-3 text-center"><input type="number" defaultValue={92} className="w-16 border border-gray-300 rounded p-1 text-center bg-white text-gray-900 outline-none focus:border-indigo-500" /></td><td className="p-3"><input type="text" className="w-full border-b border-gray-200 outline-none text-sm bg-white text-gray-900 focus:border-indigo-500" placeholder="Excellent" /></td></tr>
+            <tr className="bg-white">
+                <td className="p-3 font-medium text-gray-900">Johnny Doe</td>
+                <td className="p-3 text-center">
+                    <input type="number" defaultValue={85} className="w-16 border border-gray-300 rounded p-1 text-center bg-white text-gray-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+                </td>
+                <td className="p-3">
+                    <input type="text" className="w-full border-b border-gray-200 outline-none text-sm bg-white text-gray-900 focus:border-indigo-500 py-1" placeholder="Good effort" />
+                </td>
+            </tr>
+            <tr className="bg-white">
+                <td className="p-3 font-medium text-gray-900">Sarah Connor</td>
+                <td className="p-3 text-center">
+                    <input type="number" defaultValue={92} className="w-16 border border-gray-300 rounded p-1 text-center bg-white text-gray-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+                </td>
+                <td className="p-3">
+                    <input type="text" className="w-full border-b border-gray-200 outline-none text-sm bg-white text-gray-900 focus:border-indigo-500 py-1" placeholder="Excellent" />
+                </td>
+            </tr>
          </tbody>
        </table>
     </Card>
@@ -168,7 +186,7 @@ export const StudentTimetable: React.FC = () => (
     <Card>
       <div className="space-y-2">
         {MOCK_TIMETABLE.map(t => (
-          <div key={t.id} className="flex items-center p-3 hover:bg-gray-50 rounded-lg">
+          <div key={t.id} className="flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors">
              <div className="w-24 font-bold text-indigo-600">{t.day}</div>
              <div className="flex-1">
                 <p className="font-semibold text-gray-900">{t.subject}</p>
@@ -227,9 +245,13 @@ export const ParentMessages: React.FC = () => (
              </div>
           </div>
        </div>
-       <div className="p-4 border-t border-gray-100 flex gap-2">
-          <input type="text" placeholder="Type a message..." className="flex-1 border border-gray-300 rounded-lg px-4 py-2 outline-none focus:border-indigo-500 bg-white text-gray-900" />
-          <button className="bg-indigo-600 text-white p-2 rounded-lg"><Mail size={20} /></button>
+       <div className="p-4 border-t border-gray-100 flex gap-2 bg-white">
+          <input 
+            type="text" 
+            placeholder="Type a message..." 
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 outline-none focus:border-indigo-500 bg-white text-gray-900 focus:ring-1 focus:ring-indigo-500" 
+          />
+          <button className="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 transition-colors"><Mail size={20} /></button>
        </div>
     </div>
   </div>
