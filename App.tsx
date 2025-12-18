@@ -5,6 +5,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import TeacherDashboard from './pages/TeacherDashboard';
 import StudentDashboard from './pages/StudentDashboard';
 import ParentDashboard from './pages/ParentDashboard';
+import * as Modules from './pages/Modules';
 import { User, School, UserRole } from './types';
 
 const App: React.FC = () => {
@@ -34,28 +35,47 @@ const App: React.FC = () => {
   }
 
   const renderContent = () => {
-    // Simplified routing based on Active Tab and Role
-    // For Dashboard View
+    // Main Dashboard Routing
     if (activeTab === 'dashboard') {
       switch (user.role) {
-        case UserRole.ADMIN:
-          return <AdminDashboard school={school} />;
-        case UserRole.TEACHER:
-          return <TeacherDashboard user={user} school={school} />;
-        case UserRole.STUDENT:
-          return <StudentDashboard user={user} school={school} />;
-        case UserRole.PARENT:
-          return <ParentDashboard user={user} school={school} />;
-        default:
-          return <div>Unknown Role</div>;
+        case UserRole.ADMIN: return <AdminDashboard school={school} />;
+        case UserRole.TEACHER: return <TeacherDashboard user={user} school={school} />;
+        case UserRole.STUDENT: return <StudentDashboard user={user} school={school} />;
+        case UserRole.PARENT: return <ParentDashboard user={user} school={school} />;
+        default: return <div>Unknown Role</div>;
       }
     }
 
-    // Placeholder for other tabs (Mock Implementation for navigation demonstration)
+    // Module Routing based on Tab ID and Role
+    switch (user.role) {
+      case UserRole.ADMIN:
+        if (activeTab === 'users') return <Modules.AdminUsers />;
+        if (activeTab === 'academics') return <Modules.AdminAcademics />;
+        if (activeTab === 'fees') return <Modules.AdminFees />;
+        if (activeTab === 'reports') return <Modules.AdminReports />;
+        break;
+      case UserRole.TEACHER:
+        if (activeTab === 'attendance') return <TeacherDashboard user={user} school={school} />; // Reuse dashboard or dedicated
+        if (activeTab === 'classes') return <Modules.TeacherClasses />;
+        if (activeTab === 'exams') return <Modules.TeacherExams />;
+        break;
+      case UserRole.STUDENT:
+        if (activeTab === 'timetable') return <Modules.StudentTimetable />;
+        if (activeTab === 'homework') return <StudentDashboard user={user} school={school} />; // Reuse logic or dedicated
+        if (activeTab === 'exams') return <Modules.StudentExams />;
+        break;
+      case UserRole.PARENT:
+        if (activeTab === 'children') return <Modules.ParentChildren />;
+        if (activeTab === 'fees') return <Modules.AdminFees />; // Reusing generic fee view logic for simplicity in sample
+        if (activeTab === 'messages') return <Modules.ParentMessages />;
+        break;
+    }
+
+    // Fallback
     return (
       <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-        <div className="text-6xl font-thin mb-4">WIP</div>
-        <p className="text-lg">The "{activeTab}" module is under development for {user.role}.</p>
+        <div className="text-6xl font-thin mb-4">404</div>
+        <p className="text-lg">Module "{activeTab}" not found.</p>
       </div>
     );
   };

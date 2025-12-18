@@ -1,23 +1,85 @@
 import React, { useState } from 'react';
 import { User, School, AttendanceStatus } from '../types';
 import { MOCK_CLASSES, MOCK_STUDENTS_IN_CLASS } from '../constants';
-import { Check, X, Clock, Calendar, ChevronRight } from 'lucide-react';
+import { Check, X, Clock, Calendar, ChevronRight, Sparkles, Loader2, Plus } from 'lucide-react';
+import { GoogleGenAI, Type } from "@google/genai";
 
 interface TeacherDashboardProps {
   user: User;
   school: School;
 }
 
+interface AssignmentIdea {
+  title: string;
+  description: string;
+  estimatedTime: string;
+}
+
 const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ user, school }) => {
   const [selectedClass, setSelectedClass] = useState(MOCK_CLASSES[0]);
   const [attendance, setAttendance] = useState<Record<string, AttendanceStatus>>({});
+  
+  // AI Modal State
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [topic, setTopic] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedIdeas, setGeneratedIdeas] = useState<AssignmentIdea[]>([]);
 
   const handleMarkAttendance = (studentId: string, status: AttendanceStatus) => {
     setAttendance(prev => ({ ...prev, [studentId]: status }));
   };
 
+  const generateAssignments = async () => {
+    if (!topic.trim()) return;
+    
+    // Safe access to API Key
+    const apiKey = typeof process !== 'undefined' && process.env ? process.env.API_KEY : '';
+    
+    if (!apiKey) {
+      alert("API Key is missing. Please check .env.local file.");
+      return;
+    }
+
+    setIsGenerating(true);
+    setGeneratedIdeas([]);
+
+    try {
+      const ai = new GoogleGenAI({ apiKey });
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: `Create 3 distinct, engaging homework assignment ideas for a high school class on the topic: '${topic}'.`,
+        config: {
+          systemInstruction: "You are an expert teacher's assistant known for creating creative and educational assignments.",
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                title: { type: Type.STRING },
+                description: { type: Type.STRING },
+                estimatedTime: { type: Type.STRING, description: "e.g., '30 mins' or '1 hour'" },
+              },
+              required: ["title", "description", "estimatedTime"],
+            },
+          },
+        },
+      });
+
+      if (response.text) {
+        const ideas = JSON.parse(response.text);
+        setGeneratedIdeas(ideas);
+      }
+    } catch (error) {
+      console.error("Failed to generate assignments", error);
+      alert("Failed to generate assignments. API Key may be invalid or quota exceeded.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
            <h2 className="text-2xl font-bold text-gray-800">Good Morning, {user.name}</h2>
@@ -91,7 +153,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ user, school }) => 
           </div>
         </div>
 
-        {/* Schedule Widget */}
+        {/* Schedule & Actions Widget */}
         <div className="space-y-6">
           <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
             <h3 className="font-semibold text-gray-800 mb-4">Upcoming Schedule</h3>
@@ -116,15 +178,98 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ user, school }) => 
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl p-6 text-white shadow-lg">
-             <h3 className="font-bold text-lg mb-2">Create Assignment</h3>
-             <p className="text-indigo-100 text-sm mb-4">Post homework for your classes quickly.</p>
-             <button className="w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2">
-               Create Now <ChevronRight size={16} />
+          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl p-6 text-white shadow-lg relative overflow-hidden group">
+             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Sparkles size={64} />
+             </div>
+             <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
+               <Sparkles size={18} className="text-yellow-300" />
+               AI Assistant
+             </h3>
+             <p className="text-indigo-100 text-sm mb-4">Generate engaging homework assignments instantly using Gemini.</p>
+             <button 
+               onClick={() => setIsAiModalOpen(true)}
+               className="w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+             >
+               Create Assignment <ChevronRight size={16} />
              </button>
           </div>
         </div>
       </div>
+
+      {/* AI Generator Modal */}
+      {isAiModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <Sparkles className="text-indigo-600" size={24} />
+                  AI Assignment Creator
+                </h3>
+                <p className="text-sm text-gray-500">Powered by Gemini 3 Flash</p>
+              </div>
+              <button 
+                onClick={() => setIsAiModalOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-full text-gray-500"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto flex-1">
+              <div className="flex gap-2 mb-6">
+                <input
+                  type="text"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  placeholder="Enter a topic (e.g., Quadratic Equations, The Cold War)"
+                  className="flex-1 px-4 py-3 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-indigo-500 outline-none"
+                  onKeyDown={(e) => e.key === 'Enter' && generateAssignments()}
+                />
+                <button
+                  onClick={generateAssignments}
+                  disabled={isGenerating || !topic.trim()}
+                  className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2 transition-all"
+                >
+                  {isGenerating ? <Loader2 className="animate-spin" /> : 'Generate'}
+                </button>
+              </div>
+
+              {generatedIdeas.length > 0 ? (
+                <div className="space-y-4">
+                  <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Generated Ideas</h4>
+                  {generatedIdeas.map((idea, idx) => (
+                    <div key={idx} className="border border-gray-200 rounded-xl p-4 hover:border-indigo-300 hover:shadow-md transition-all group">
+                      <div className="flex justify-between items-start mb-2">
+                        <h5 className="font-bold text-gray-900 text-lg">{idea.title}</h5>
+                        <span className="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded-md font-medium flex items-center gap-1">
+                          <Clock size={12} /> {idea.estimatedTime}
+                        </span>
+                      </div>
+                      <p className="text-gray-600 mb-4 text-sm leading-relaxed">{idea.description}</p>
+                      <button className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                        <Plus size={16} /> Use this assignment
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-gray-400">
+                  {isGenerating ? (
+                    <div className="flex flex-col items-center gap-3">
+                      <Loader2 className="animate-spin text-indigo-500" size={32} />
+                      <p>Dreaming up assignments...</p>
+                    </div>
+                  ) : (
+                    <p>Enter a topic above to generate creative assignment ideas.</p>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
