@@ -9,8 +9,6 @@
       // Polyfill process to avoid "process is not defined" reference errors in browser
       window.process = {
         env: {
-          // In a real build, this is replaced by the bundler. 
-          // For this sample preview, we ensure the object exists so code accessing process.env doesn't crash.
           NODE_ENV: 'development',
           API_KEY: 'AIzaSyA-YvZiJinE2_x9KZHn0JvSu9_nY9LO3XE'
         }
@@ -36,13 +34,14 @@
   <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^18.3.0",
-    "react-dom/client": "https://esm.sh/react-dom@^18.3.0/client",
-    "react/": "https://esm.sh/react@^18.3.0/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.263.1",
-    "recharts": "https://esm.sh/recharts@^2.12.0",
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client?deps=react@18.2.0",
+    "react/": "https://esm.sh/react@18.2.0/",
+    "lucide-react": "https://esm.sh/lucide-react@0.263.1?deps=react@18.2.0",
+    "recharts": "https://esm.sh/recharts@2.12.0?deps=react@18.2.0,react-dom@18.2.0",
+    "prop-types": "https://esm.sh/prop-types@15.8.1",
     "@google/genai": "https://esm.sh/@google/genai",
-    "react-dom/": "https://esm.sh/react-dom@^18.3.0/"
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
   }
 }
 </script>
